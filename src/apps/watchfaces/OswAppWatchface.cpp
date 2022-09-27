@@ -136,9 +136,12 @@ void OswAppWatchface::loop() {
     if (hal->btnHasGoneDown(BUTTON_3)) {
         hal->increaseBrightness(25);
     }
-    if (hal->btnHasGoneDown(BUTTON_2)) {
+     if (hal->btnDoublePress(BUTTON_2)) {
         hal->decreaseBrightness(25);
     }
+    // if (hal->btnHasGoneDown(BUTTON_2)) {
+    //     hal->decreaseBrightness(25);
+    // }
 
 #ifdef GIF_BG
     // if (millis() - 1000 > lastDraw) {

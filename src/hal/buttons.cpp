@@ -27,6 +27,7 @@ void OswHal::setupButtons(void) {
         _btnLastState[i] = false;
         _btnIsDown[i] = false;
         _btnGoneUp[i] = false;
+        _detectDoubleCount[i] = 0 ;
     }
 }
 
@@ -56,7 +57,17 @@ void OswHal::checkButtons(void) {
         // store the time stamp since the button went down
         if (_btnGoneDown[i]) {
             _btnIsDownMillis[i] = millis();
+            if(_detectDoubleCount[i]==0){
+                _btnDoubleMillis[i] = millis();
+            }
+            _detectDoubleCount[i]+=1;
         }
+
+        double_timeOut[i] = millis() - _btnDoubleMillis[i] < 1000;
+        // check if the button has been down double-click
+        _btnDoublePress[i] = _detectDoubleCount[i] == 2 and double_timeOut[i];
+        if(_detectDoubleCount[i] == 2 or double_timeOut[i]) _detectDoubleCount[i] = 0 ;
+
 
         // check if the button has been down long enough
         _btnLongPress[i] = _btnIsDown[i] == true and (millis() > _btnIsDownMillis[i] + OswConfigAllKeys::appSwitcherLongPress.get());
@@ -80,6 +91,10 @@ void OswHal::checkButtons(void) {
 // Buttons (Engine)
 bool OswHal::btnHasGoneDown(Button btn) {
     return _btnGoneDown[btn];
+}
+bool OswHal::btnDoublePress(Button btn) {
+    Serial.println(_btnDoublePress[btn]);
+    return _btnDoublePress[btn];
 }
 bool OswHal::btnHasGoneUp(Button btn) {
     return _btnGoneUp[btn];
